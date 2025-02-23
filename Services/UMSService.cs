@@ -1,72 +1,63 @@
 using System;
+using System.Data;
 using ProjMngWasm.Models;
 
 namespace ProjMngWasm.Services;
 
 
-public interface IUMSService {
-        Task<IEnumerable<University>> GetUniversities(string token);
-        Task<IEnumerable<University>> GetData(string url, string token);
-    }
 
 public class UMSService : BaseService, IUMSService {
-        public UMSService(HttpClient httpClient) : base(httpClient) { }
+  public UMSService(HttpClient httpClient, ISessionStorageService sess) : base(httpClient, sess) { }
 
-        public async Task<IEnumerable<University>> GetUniversities(string token) {
+  public async Task<string> GetData(string path, Dictionary<string, object> dic) {
 
-Req req = new Req(){
-QueryName="SP_MAIN_MENU_SELECT"
-, ReturnQueryParameter=false
-, QueryParameters= new List<QueryParameter>(){
-    new QueryParameter(){
-        ParameterName="USER_ID"
-        , ParameterValue="test"
-        , ParameterDirection=1
-        , Prefix="IN_"
+    /*
+    Req req = CreateReq("SP_MAIN_MENU_SELECT", new Dictionary<string, object>() {
+      { "USER_ID","test" }
+    });
+    */
+
+    Req req = CreateReq(path, dic);
+
+    return await PostMethodObj("api/QueryService/ExecuteRequestAsync", req);
+
+    //return null;
+    //return await GetMethodList<University>($"");
+  }
+
+
+
+  public async Task Login() {
+
+    Req req = CreateReq("SP_USER_LOGIN_SELECT", new Dictionary<string, object>() {
+      { "USER_ID","test" },{ "PASSWORD","x" },{ "IS_HAN","H" }
+    });
+
+    string token = await PostMethodStr("api/Account/Login", req);
+
+
+    if (!string.IsNullOrEmpty(token)) {
+      _sess.SetItemAsync("ums_token", token);
     }
+
+  }
+
+  Req CreateReq(string qName, Dictionary<string, object> dic) {
+    Req req = new Req() { QueryName = qName };
+    if (dic != null && dic.Count > 0) {
+      foreach (var d in dic) {
+        req.QueryParameters.Add(new QueryParameter() { ParameterName = d.Key, ParameterValue = d.Value });
+      }
+    }
+    return req;
+  }
+
+
 }
-};
-await PostMethodRes("api/QueryService/ExecuteRequestAsync", req, token);
-
-return null;
-            //return await GetMethodList<University>($"");
-        }
 
 
-        public async Task<IEnumerable<University>> GetData(string url, string token) {
 
-Req req = new Req(){
-QueryName="SP_USER_LOGIN_SELECT"
-, QueryParameters= new List<QueryParameter>(){
-    new QueryParameter(){ ParameterName="USER_ID" , ParameterValue="test" }
-    , new QueryParameter(){ ParameterName="PASSWORD" , ParameterValue="test" }
-    , new QueryParameter(){ ParameterName="IS_HAN" , ParameterValue="H" }
+public interface IUMSService {
+  Task<string> GetData(string path, Dictionary<string, object> dic);
+  Task Login();
 }
-};
-
-
-
-await PostMethodRes("api/Account/Login", req, token);
-
-return null;
-            //return await GetMethodList<University>($"");
-        }
-
-
-
-    }
-
-
-    public class Req{
-    public string QueryName{get;set;}
-     public List<QueryParameter> QueryParameters{get;set;} = new List<QueryParameter>();
-     public bool ReturnQueryParameter{get;set;}
-    }
-
-    public class QueryParameter{
-     public string ParameterName{get;set;}
-     public string ParameterValue{get;set;}
-     public int ParameterDirection{get;set;} = 1;
-     public string Prefix{get;set;} = "IN_";
-    }
-
