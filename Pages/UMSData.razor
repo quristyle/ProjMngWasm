@@ -1,0 +1,40 @@
+﻿@using ProjMngWasm.Models;
+@using ProjMngWasm.Services;
+@page "/ums";
+
+<h1>ums</h1>
+
+<p>This component demonstrates fetching data from ums server.</p>
+
+<button @onclick="OnLogin">login</button>
+
+
+<input @bind-value="abcde" > 
+
+<button @onclick="OnloadData">Loading data </button>
+
+
+
+
+
+@code {
+
+[Parameter] public string abcde{get;set;}
+
+    [Inject]    protected IUMSService UmsService { get; set; }
+
+    protected async Task OnLogin() {
+       await UmsService.GetData("", "");//  .GetData("");
+    }
+
+
+    protected async Task OnloadData() {
+        await UmsService.GetUniversities( abcde );
+    }
+
+
+
+    protected override async Task OnInitializedAsync() {
+       //await UmsService.GetUniversities();
+    }
+}
