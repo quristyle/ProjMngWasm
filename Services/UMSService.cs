@@ -25,6 +25,11 @@ public class UMSService : BaseService, IUMSService {
     //return await GetMethodList<University>($"");
   }
 
+  public async Task<IEnumerable<IDictionary<string, object>>> GetList(string path, Dictionary<string, object> dic) {
+    Req req = CreateReq(path, dic);
+    return await PostMethodList("api/QueryService/ExecuteRequestAsync", req);
+  }
+
 
 
   public async Task Login() {
@@ -59,5 +64,6 @@ public class UMSService : BaseService, IUMSService {
 
 public interface IUMSService {
   Task<string> GetData(string path, Dictionary<string, object> dic);
+  Task<IEnumerable<IDictionary<string, object>>> GetList(string path, Dictionary<string, object> dic);
   Task Login();
 }

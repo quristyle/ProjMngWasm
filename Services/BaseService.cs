@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProjMngWasm.Services;
 public class BaseService {
@@ -135,6 +136,38 @@ public class BaseService {
 
     }
 		return result;
+
+  }
+
+  public async Task<IEnumerable<IDictionary<string, object>>> PostMethodList<T>(string url, T content) {
+
+    IDictionary<string, object> idict = new Dictionary<string, object>();
+		IEnumerable<IDictionary<string, object>> dics = null;
+
+    string tk = await _sess.GetItemAsync<string>("ums_token");
+    if (!string.IsNullOrEmpty(tk) && _httpClient.DefaultRequestHeaders.Authorization == null) {
+      _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tk);
+    }
+
+    HttpResponseMessage response = await _httpClient.PostAsJsonAsync(url, content, JsonSerializerOptions.Default);
+    response.EnsureSuccessStatusCode();
+
+    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+      var responseString = await response.Content.ReadAsStringAsync();//.ReadAsStreamAsync();
+
+      Newtonsoft.Json.Linq.JObject jobj = Newtonsoft.Json.Linq.JObject.Parse(responseString);
+
+      JToken jt = jobj.Descendants().Where(x => x.Type == JTokenType.Property && ((JProperty)x).Name == "data")
+      .Select(p => ((JProperty)p).Value).FirstOrDefault();
+
+			//  idict = jt.ToObject<IDictionary<string, object>>();
+
+
+			dics = jt.ToObject<List<IDictionary<string, object>>>();
+
+
+    }
+		return dics;
 
   }
 

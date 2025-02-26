@@ -1,4 +1,4 @@
-﻿namespace ProjMngWasm.Models {
+﻿namespace ProjMngWasm.Models;
 
   public class Req {
     public string QueryName { get; set; }
@@ -14,4 +14,3 @@
   }
 
 
-}

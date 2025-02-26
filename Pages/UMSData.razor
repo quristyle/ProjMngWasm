@@ -1,20 +1,50 @@
 ﻿@using ProjMngWasm.Models;
 @using ProjMngWasm.Services;
-@page "/ums";
+@page "/";
 
 <h1>ums</h1>
-
-<button @onclick="OnLogin">한주프로젝트 관리 추적</button>
-
+<div>
 
 
-<button @onclick="OnloadData">Load menu</button>
+  <RadzenButton Click="@OnLogin" Text="한주프로젝트 관리 추적"></RadzenButton>
 
 
-<RadzenDataGrid @bind-Value=@selectedItems Data="@data" TItem="IDictionary<string, object>" ColumnWidth="200px"
-                AllowFiltering="true" FilterPopupRenderMode="PopupRenderMode.OnDemand" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true">
-    <Columns>
-        @foreach (var column in columns)
+  <RadzenButton Click="@OnloadData" Text="Load Menu"></RadzenButton>
+  <RadzenButton Click="@OnLoadWrk" Text="Load Work"></RadzenButton>
+
+
+  <input @bind-value="srtype" />
+
+</div>
+
+<div>
+
+  @selectedItems
+
+  <ul>
+    <li><span>@selectedItems?[0]["a"]</span></li>
+    <li><span>@selectedItems?[0]["d"]</span></li>
+    <li><button @onclick="OnSave" >complete</button></li>
+    </ul>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+
+      <RadzenDataGrid Data="@data2" @bind-Value=@selectedItems
+  TItem="IDictionary<string, object>" 
+  ColumnWidth="150px"
+                AllowFiltering="true" 
+                FilterPopupRenderMode="PopupRenderMode.OnDemand" 
+                FilterMode="FilterMode.Advanced" 
+                AllowPaging="true" AllowSorting="true"
+                
+
+>
+  <Columns>
+    
+        @foreach (var column in cols)
         {
             <RadzenDataGridColumn @key=@column.Key Title="@column.Key" Type="column.Value"
                                   Property="@PropertyAccess.GetDynamicPropertyExpression(column.Key, column.Value)">
@@ -23,8 +53,13 @@
                 </Template>
             </RadzenDataGridColumn>
         }
-    </Columns>
+    
+  </Columns>
 </RadzenDataGrid>
+</div>
+
+  </div>
+</div>
 
 
 <pre >@abcde</pre>
@@ -33,26 +68,60 @@
 
 [Parameter] public string abcde{get;set;}
 
+  public string srtype { get; set; } = "0";
+
+
     [Inject]    protected IUMSService UmsService { get; set; }
 
     protected async Task OnLogin() {
        await UmsService.Login();
     }
 
-
+    
     protected async Task OnloadData() {
-
     abcde = await UmsService.GetData("SP_MAIN_MENU_SELECT", new Dictionary<string, object>() { { "USER_ID", "test" } });
     }
 
+  protected async Task OnLoadWrk() {
+    cols.Clear();
+    data2 = await UmsService.GetList("p_work", new Dictionary<string, object>() { { "SRTP", srtype } });
+
+    foreach( var dd in data2 ){
+      foreach( var d in dd ){
+       cols.Add( d.Key, typeof(string) );
+      }
+      break;
+    }
+
+    //data2 = dt.AsEnumerable();
+  }
+
+
+  
+  
+  protected async Task OnSave() {
+    cols.Clear();
+    data2 = await UmsService.GetList("p_work", new Dictionary<string, object>() { { "SRTP", srtype }, { "ID", selectedItems?[0]["a"] }, { "EDT", DateTime.Now.ToString("yyyy-MM-dd") } });
+
+    foreach( var dd in data2 ){
+      foreach( var d in dd ){
+       cols.Add( d.Key, typeof(string) );
+      }
+      break;
+    }
+
+    //data2 = dt.AsEnumerable();
+  }
 
 
 
   IList<IDictionary<string, object>> selectedItems;
-
+  
   public IEnumerable<IDictionary<string, object>> data { get; set; }
-
+  public IEnumerable<IDictionary<string, object>> data2 { get; set; }
+  
   public IDictionary<string, Type> columns { get; set; }
+  public IDictionary<string, Type> cols { get; set; } = new Dictionary<string, Type>();
 
   public enum EnumTest {
     EnumValue1,
