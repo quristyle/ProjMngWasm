@@ -27,6 +27,8 @@ builder.Services.AddHttpClient<IUMSService, UMSService>(client => {
 
 
 builder.Services.AddScoped<ExampleService>();
+builder.Services.AddSingleton<GitHubService>();
+
 //builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://nums.hanjucorp.co.kr") });
 
 var app = builder.Build();

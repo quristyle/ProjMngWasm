@@ -18,15 +18,13 @@
             <RadzenColumn Size="5">
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
                     <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
-                    <span style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Radzen Blazor Components</span>
+                    <span style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Jsini Project Managerment System</span>
                 </RadzenStack>
             </RadzenColumn>
             <RadzenColumn Size="7">
                 <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
                     <div class="rz-display-none rz-display-sm-inline-flex align-items-center">
-                        <RadzenLink Path="/docs/api/" Text="API Reference" title="Radzen Blazor Components API Reference" class="rz-mx-2 rz-mx-lg-4" target="_blank" />
-                        <RadzenLink Path="https://www.radzen.com/" Text="About Radzen" title="Create .NET Core web applications fast & easy" class="rz-text-nowrap rz-mx-2 rz-mx-lg-4" target="_blank" />
-                        <RadzenLink Path="https://github.com/radzenhq/radzen-blazor" Text="GitHub" title="Star Radzen Blazor Components on GitHub" class="rz-text-nowrap rz-mx-2 rz-mx-lg-4" target="_blank" />
+                        <RadzenLink Path="/docs/api/" Text="Help" title="API Reference" class="rz-mx-2 rz-mx-lg-4" target="_blank" />
                     </div>
                     <RadzenAppearanceToggle class="rz-mx-2" />
                     <RadzenSidebarToggle Icon="settings" Click="@(() => configSidebarExpanded = !configSidebarExpanded)" class="rz-m-0" />
@@ -62,6 +60,17 @@
     </div>
     <div style="flex: 1; overflow: auto">
     <RadzenPanelMenu Match="NavLinkMatch.Prefix">
+      
+      <RadzenPanelMenuItem Text="장비 Monitoring" Icon="" aria-label="">
+          <RadzenPanelMenuItem Text="Funeral" Path="/funeral" Icon="" aria-label=""></RadzenPanelMenuItem>
+          <RadzenPanelMenuItem Text="Jsini" Path="/jsini" Icon="" aria-label=""></RadzenPanelMenuItem>
+        </RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Projects" Icon="" aria-label="">
+          <RadzenPanelMenuItem Text="UMS Monitor" Path="/ums" Icon="" aria-label=""></RadzenPanelMenuItem>
+          <RadzenPanelMenuItem Text="UMS Data" Path="/umsw" Icon="" aria-label=""></RadzenPanelMenuItem>
+        </RadzenPanelMenuItem>
+
+      @if(false){
         @foreach (var category in examples)
         {
             <NavigationItem @key=category @bind-Expanded=@category.Expanded Example=@category>
@@ -85,6 +94,7 @@
                     }
                 }
             </NavigationItem>
+        }
         }
     </RadzenPanelMenu>
     </div>
