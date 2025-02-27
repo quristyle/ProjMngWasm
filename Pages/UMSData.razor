@@ -80,7 +80,7 @@
 
     
     protected async Task OnloadData() {
-    abcde = await UmsService.GetData("SP_MAIN_MENU_SELECT", new Dictionary<string, object>() { { "USER_ID", "test" } });
+    abcde = await UmsService.GetData("SP_MAIN_MENU_SELECT", new Dictionary<string, object>() { { "USER_ID", "super" }, { "PASSWORD_C", "super" } });
     }
 
   protected async Task OnLoadWrk() {
