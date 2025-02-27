@@ -35,7 +35,7 @@ public class UMSService : BaseService, IUMSService {
   public async Task Login() {
 
     Req req = CreateReq("SP_USER_LOGIN_SELECT", new Dictionary<string, object>() {
-      { "USER_ID","test" },{ "PASSWORD","x" },{ "IS_HAN","H" }
+      { "USER_ID","super" },{ "PASSWORD","super" },{ "PASSWORD_C","super" },{ "IS_HAN","H" }
     });
 
     string token = await PostMethodStr("api/Account/Login", req);
